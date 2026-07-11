@@ -1,0 +1,121 @@
+DROP TABLE IF EXISTS students;
+DROP TABLE IF EXISTS teachers;
+
+CREATE TABLE students (
+    id INTEGER PRIMARY KEY,
+    first_name TEXT,
+    last_name TEXT
+);
+
+CREATE TABLE teachers (
+    id INTEGER PRIMARY KEY,
+    first_name TEXT,
+    last_name TEXT
+);
+
+INSERT INTO students (id, first_name, last_name) VALUES
+(1, 'Aziz', 'Mansurov'),
+(2, 'Eldor', 'Sobirov'),
+(3, 'Shohruh', 'Hakimov'),
+(4, 'Oshno', 'Mirzayeva'),
+(5, 'Umid', 'Valiyev'),
+(6, 'Bobur', 'Axmedov'),
+(7, 'Iroda', 'Qosimova'),
+(8, 'Javohir', 'G'ofurov'),
+(9, 'Akmal', 'Rustamov'),
+(10, 'Madina', 'Olimova');
+
+INSERT INTO teachers (id, first_name, last_name) VALUES
+(1, 'Otabek', 'Tursunov'),
+(2, 'Dildora', 'Kamolova'),
+(3, 'Elbek', 'Niyozov'),
+(4, 'Asal', 'Zokirova'),
+(5, 'Ulug'bek', 'Nurmatov'),
+(6, 'Firdavs', 'Xoliqov'),
+(7, 'Nigora', 'Ismoilova'),
+(8, 'Shuhrat', 'Sodiqov'),
+(9, 'Izat', 'Hasanov'),
+(10, 'Odil', 'Hamroyev');  
+
+SELECT first_name, last_name FROM students 
+WHERE first_name LIKE 'A%' OR first_name LIKE 'E%' OR first_name LIKE 'I%' OR first_name LIKE 'O%' OR first_name LIKE 'U%'
+UNION
+SELECT first_name, last_name FROM teachers 
+WHERE first_name LIKE 'A%' OR first_name LIKE 'E%' OR first_name LIKE 'I%' OR first_name LIKE 'O%' OR first_name LIKE 'U%';
+
+SELECT * FROM (
+    SELECT first_name, last_name FROM students 
+    UNION 
+    SELECT first_name, last_name FROM teachers
+) 
+ORDER BY length(last_name) ASC, last_name ASC;
+
+SELECT * FROM (
+    SELECT first_name, last_name, 'student' AS source FROM students 
+    UNION
+    SELECT first_name, last_name, 'teacher' AS source FROM teachers
+) 
+ORDER BY source, last_name ASC;
+
+SELECT * FROM (
+    SELECT first_name, last_name, id FROM students 
+    UNION 
+    SELECT first_name, last_name, id FROM teachers
+) 
+ORDER BY id DESC 
+LIMIT 3;
+
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS shipments;
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    product TEXT,
+    quantity INTEGER
+);
+
+CREATE TABLE shipments (
+    shipment_id INTEGER PRIMARY KEY,
+    product TEXT,
+    quantity INTEGER,
+    order_id INTEGER
+);
+
+
+INSERT INTO orders (order_id, product, quantity) VALUES
+(1, 'Prorektor', 5),
+(2, 'Klaviatura', 10),
+(3, 'Protsessor', 7),
+(4, 'Mausepad', 3),
+(5, 'Kolonka', 12),
+(6, 'Videokarta', 8),
+(7, 'Mikrofon', 6),
+(8, 'SSD-disk', 4);
+
+
+INSERT INTO shipments (shipment_id, order_id, product, quantity) VALUES
+(1, 1, 'Prorektor', 5),
+(2, 2, 'Klaviatura', 9),
+(3, 3, 'Protsessor', 7),
+(4, 4, 'Mausepad', 3),
+(5, 5, 'Kolonka', 11),
+(6, 6, 'Videokarta', 8),
+(7, 7, 'Veb-kamera', 6),
+(8, 8, 'SSD-disk', 4);
+
+
+SELECT * FROM (SELECT product, quantity FROM orders INTERSECT SELECT product, quantity FROM shipments);
+
+SELECT * FROM (SELECT product, quantity FROM orders INTERSECT SELECT product, quantity FROM shipments WHERE quantity >= 5);
+
+SELECT order_id, product, quantity FROM orders WHERE (product, quantity) IN (SELECT product, quantity FROM orders INTERSECT SELECT product, quantity FROM shipments);
+
+SELECT order_id, product, quantity FROM orders WHERE (product, quantity) IN (SELECT product, quantity FROM orders INTERSECT SELECT product, quantity FROM shipments) ORDER BY product ASC;
+
+SELECT product FROM orders EXCEPT SELECT product FROM shipments;
+
+SELECT product FROM shipments EXCEPT SELECT product FROM orders ORDER BY product ASC;
+
+SELECT order_id FROM orders WHERE order_id >= 10 EXCEPT SELECT order_id FROM shipments WHERE order_id >= 10;
+
+SELECT order_id FROM shipments WHERE quantity < 5 EXCEPT SELECT order_id FROM orders WHERE quantity < 5;
