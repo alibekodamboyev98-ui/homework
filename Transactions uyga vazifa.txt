@@ -1,0 +1,107 @@
+Transactionsimport sqlite3
+from abc import ABC, abstractmethod
+from contextlib import closing
+
+database_path = "transactions.db"
+transactions_table = "transactions"
+account_table = "accounts"
+
+
+
+class BaseCRUD(ABC):
+    def init(self, database_path, table_name):
+        self.database_path = database_path
+        self.table_name = table_name
+        self.create_table_accounts()
+        self.create_table_transactions()
+
+    def get_connection(self):
+        return closing(sqlite3.connect(self.database_path))
+
+    def create_table_accounts(self):
+        with self.get_connection() as connection:
+            cursor = connection.cursor()
+            query = f"""
+            CREATE TABLE IF NOT EXISTS {self.table_name} (
+                id INTEGER PRIMARY KEY,
+                name TEXT NOT NULL,
+                balance REAL NOT NULL
+            );
+            """
+            cursor.execute(query)
+            connection.commit()
+
+            cursor.execute(query)
+            connection.commit()
+
+    def create_table_transactions(self):
+        """"Create the transactions table if it does not exist."""""
+        with self.get_connection() as connection:
+            cursor = connection.cursor()
+            query = f"""
+            CREATE TABLE IF NOT EXISTS {transactions_table} (
+                id INTEGER PRIMARY KEY,
+                from_account_id INTEGER NOT NULL,
+                to_account_id INTEGER NOT NULL,
+                amount REAL NOT NULL,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(from_account_id) REFERENCES {self.table_name}(id),
+                FOREIGN KEY(to_account_id) REFERENCES {self.table_name}(id)
+            );
+            """
+
+            cursor.execute(query)
+            connection.commit()
+
+    def insert(self, **kwargs):
+        """"Yangi hisob qo'shish uchun."""""
+        with self.get_connection() as connection:
+            cursor = connection.cursor()
+            columns = ', '.join(kwargs.keys())
+            placeholders = ', '.join('?' for _ in kwargs)
+            query = f"INSERT INTO {self.table_name} ({columns}) VALUES ({placeholders})"
+            cursor.execute(query, tuple(kwargs.values()))
+            connection.commit()
+            return cursor.lastrowid
+
+    def get(self):
+        """"Barcha hisoblarni ko'rsatish uchun."""""
+        with self.get_connection() as connection:
+            cursor = connection.cursor()
+            query = f"SELECT * FROM {self.table_name}"
+            cursor.execute(query)
+            records = cursor.fetchall()
+            for record in records:
+                print(record)
+
+    def deposit(self, id, amount, id_column="id"):
+        """"Hisobga depozit qo'shish uchun."""""
+        if amount <= 0:
+            print("Deposit amount must be positive.")
+            return
+
+        with self.get_connection() as connection:
+            cursor = connection.cursor()
+            query = f"UPDATE {self.table_name} SET balance = balance + ? WHERE {id_column}=?"
+            cursor.execute(query, (amount, id))
+            connection.commit()
+
+    def withdraw(self, id, amount, id_column="id"):
+        """"Hisobdan pul yechish uchun."""""
+        with self.get_connection() as connection:
+            cursor = connection.cursor()
+            query = f"SELECT balance FROM {self.table_name} WHERE {id_column} = ?"
+            cursor.execute(query, (id,))
+            account = cursor.fetchone()
+
+            if not account:
+                print(f"Account {id} not found.")
+                return
+
+            if account[0] < amount:
+                print(f"Insufficient funds in account {id}. Current balance: {account[0]}")
+                return
+
+            query = f"UPDATE {self.table_name} SET balance = balance - ? WHERE {id_column} = ?"
+            cursor.execute(query, (amount, id))
+            connection.commit()
