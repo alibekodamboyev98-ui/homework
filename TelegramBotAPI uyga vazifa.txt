@@ -1,0 +1,138 @@
+import json
+import requests
+
+token = "8695713989:AAHe28Odkj_TRe-FHFA8ejN9osMuGC9pNEo"
+
+
+# https://core.telegram.org/bots/api#getme
+method = 'getMe'
+response = requests.post(
+    url=f'https://api.telegram.org/bot{token}/{method}'
+).json()
+print(response)
+
+
+# https://core.telegram.org/bots/api#sendmessage
+method = 'sendMessage'
+response = requests.post(
+    url=f'https://api.telegram.org/bot{token}/{method}',
+    data={'chat_id': 7547294970, 'text': 'hello friend'}
+).json()
+print(response)
+
+
+# https://core.telegram.org/bots/api#copymessage
+method = 'copyMessage'
+response = requests.post(
+    url=f'https://api.telegram.org/bot{token}/{method}',
+    data={'chat_id': 7547294970, 'from_chat_id': 7547294970, 'message_id': 1}
+).json()
+print(response)
+
+
+# https://core.telegram.org/bots/api#copymessages
+method = 'copyMessages'
+response = requests.post(
+    url=f'https://api.telegram.org/bot{token}/{method}',
+    data={'chat_id': 7547294970, 'from_chat_id': 7547294970, 'message_ids': '[1, 2]'}
+).json()
+print(response)
+
+
+# https://core.telegram.org/bots/api#sendphoto
+method = 'sendPhoto'
+response = requests.post(
+    url=f'https://api.telegram.org/bot{token}/{method}',
+    data={'chat_id': 7547294970, 'photo': 'https://picsum.photos/300/200', 'caption': 'Rasm'}
+).json()
+print(response)
+
+
+# https://core.telegram.org/bots/api#sendaudio
+method = 'sendAudio'
+response = requests.post(
+    url=f'https://api.telegram.org/bot{token}/{method}',
+    data={'chat_id': 7547294970, 'audio': 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'}
+).json()
+print(response)
+
+
+# https://core.telegram.org/bots/api#senddocument
+method = 'sendDocument'
+response = requests.post(
+    url=f'https://api.telegram.org/bot{token}/{method}',
+    data={'chat_id': 7547294970, 'document': 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'}
+).json()
+print(response)
+
+
+# https://core.telegram.org/bots/api#sendvideo
+method = 'sendVideo'
+response = requests.post(
+    url=f'https://api.telegram.org/bot{token}/{method}',
+    data={'chat_id': 7547294970, 'video': 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'}
+).json()
+print(response)
+
+
+# https://core.telegram.org/bots/api#sendanimation
+method = 'sendAnimation'
+response = requests.post(
+    url=f'https://api.telegram.org/bot{token}/{method}',
+    data={'chat_id': 7547294970, 'animation': 'https://media.giphy.com/media/3oKIPnAiaMCws8nOsE/giphy.gif'}
+).json()
+print(response)
+
+
+# https://core.telegram.org/bots/api#sendvoice
+method = 'sendVoice'
+response = requests.post(
+    url=f'https://api.telegram.org/bot{token}/{method}',
+    data={'chat_id': 7547294970, 'voice': 'https://www.w3schools.com/html/horse.ogg'}
+).json()
+print(response)
+
+
+# https://core.telegram.org/bots/api#sendcontact
+method = 'sendContact'
+response = requests.post(
+    url=f'https://api.telegram.org/bot{token}/{method}',
+    data={'chat_id': 7547294970, 'phone_number': '+998901234567', 'first_name': 'Joni'}
+).json()
+print(response)
+
+
+# https://core.telegram.org/bots/api#sendpoll
+method = 'sendPoll'
+response = requests.post(
+    url=f'https://api.telegram.org/bot{token}/{method}',
+    data={'chat_id': 7547294970, 'question': 'Savol?', 'options': json.dumps(["Variant A", "Variant B"])}
+).json()
+print(response)
+
+
+# https://core.telegram.org/bots/api#senddice
+method = 'sendDice'
+response = requests.post(
+    url=f'https://api.telegram.org/bot{token}/{method}',
+    data={'chat_id': 7547294970, 'emoji': '🎲'}
+).json()
+print(response)
+
+
+# https://core.telegram.org/bots/api#sendchataction
+method = 'sendChatAction'
+response = requests.post(
+    url=f'https://api.telegram.org/bot{token}/{method}',
+    data={'chat_id': 7547294970, 'action': 'typing'}
+).json()
+print(response)
+
+
+# https://core.telegram.org/bots/api#setmessagereaction
+method = 'setMessageReaction'
+response = requests.post(
+    url=f'https://api.telegram.org/bot{token}/{method}',
+    data={'chat_id': 7547294970, 'message_id': 1, 'reaction': json.dumps([{"type": "emoji", "emoji": "👍"}])}
+).json()
+print(response)
